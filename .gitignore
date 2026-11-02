@@ -1,0 +1,4 @@
+# Build-Ergebnisse (die fertige EXE kommt unter Releases)
+*.exe
+src/obj/
+*.bak

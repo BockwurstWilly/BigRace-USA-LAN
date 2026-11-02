@@ -1,0 +1,5 @@
+LIBRARY dinput
+EXPORTS
+    DirectInputCreateA=Proxy_DirectInputCreateA
+    DirectInputCreateW=Proxy_DirectInputCreateW
+    DirectInputCreateEx=Proxy_DirectInputCreateEx
