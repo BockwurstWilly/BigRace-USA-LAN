@@ -1,63 +1,77 @@
-# Pro Pinball – Big Race USA: LAN-Patch
+# Pro Pinball – Big Race USA: LAN Patch
 
-Head-To-Head im Heimnetz unter Windows 10/11 – ohne DirectPlay-Gefrickel.
+Head-to-head over your home network on Windows 10/11 – without DirectPlay trouble.
 
-Getestet mit der GOG-Version. Das Spiel selbst ist nicht enthalten.
+Tested with the GOG release. The game itself is not included. The patcher and the launcher speak German; the steps below explain every button.
+
+*LAN-Patch für Head-To-Head im Heimnetz – deutsche Kurzfassung unten.*
 
 ## Download
 
-**BigRace-LAN-Patcher.exe** unter [Releases](../../releases). Mehr braucht man nicht – alles Weitere steckt in der EXE.
+**BigRace-LAN-Patcher.exe** from [Releases](../../releases). That's all you need – everything else is inside the EXE.
 
-## Installieren (auf jedem PC)
+## Install (on every PC)
 
-- Spiel schließen
-- `BigRace-LAN-Patcher.exe` starten, Administratorabfrage bestätigen
-- Spielordner prüfen, **Patch anwenden**
-- Am Ende kommt „Fertig.“ – sonst steht da, was fehlt
+- Close the game
+- Run `BigRace-LAN-Patcher.exe` and confirm the administrator prompt
+- Check the game folder, click **Patch anwenden** (apply patch)
+- At the end it says "Fertig." (done) – otherwise it tells you what is missing
 
-Installiert wird:
+What gets installed:
 
-- Fenstermodus ([cnc-ddraw](https://github.com/FunkyFr3sh/cnc-ddraw))
-- `dinput.dll` – zeigt Mitspieler, Lobby und nächsten Schritt im Fenstertitel
-- LAN-Launcher + Verknüpfung „Big Race USA LAN“ auf dem Desktop
-- Firewall-Freigaben fürs Heimnetz (Spiel, UDP 47700, TCP 2914)
+- Window mode ([cnc-ddraw](https://github.com/FunkyFr3sh/cnc-ddraw))
+- `dinput.dll` – shows other players, the lobby and the next step in the window title
+- LAN launcher + desktop shortcut "Big Race USA LAN"
+- Firewall rules for the home network (game, UDP 47700, TCP 2914)
 
-**Patch entfernen** im selben Programm macht alles wieder rückgängig.
+**Patch entfernen** (remove patch) in the same program undoes everything.
 
-## Spielen
+## Play
 
-- „Big Race USA LAN“ starten, Fahrernamen eintragen
-- Warten, bis die anderen im Fahrerfeld stehen
+- Start "Big Race USA LAN", enter a driver name
+- Wait until the others appear in the field
 - **START**
-- Im Spiel erst den Tisch laden, dann Esc › Head-To-Head › Friendly (Lobby)
-  (Esc im Hauptmenü beendet das Spiel)
-- In der Lobby den Gegner anklicken – das Match startet
+- In the game load the table first, then Esc › Head-To-Head › Friendly (Lobby)
+  (Esc in the main menu quits the game)
+- Click your opponent in the lobby – the match starts
 
-Geht auch mit mehr Leuten, alle landen in derselben Lobby. Easy/Normal/Hard in der Liste sind Computergegner.
+Works with more players too; everybody ends up in the same lobby. Easy/Normal/Hard in the list are computer opponents.
 
-## Wenn es hakt
+## Troubleshooting
 
-- **Fahrerfeld bleibt leer:** im selben Netz? VPN (Tailscale, Hamachi, ZeroTier) trennen. Patcher auf allen PCs gelaufen?
-- **Lobby-PC wurde geschlossen:** in der Lobby Cancel, Lobby neu öffnen
-- **WLAN:** Gastnetz/Client-Isolation am Router aus
-- **Andere Firewall** (Norton, Kaspersky, Bitdefender …): `BigRaceUSA.exe` und `BigRace-LAN-Launcher.exe` dort erlauben
-- **Protokoll:** `%TEMP%\BigRace-Lobby-Protokoll.txt`
+- **The field stays empty:** same network? Disconnect VPNs (Tailscale, Hamachi, ZeroTier). Did the patcher run on every PC?
+- **The lobby PC was closed:** Cancel in the lobby, open the lobby again
+- **Wi-Fi:** switch off guest network / client isolation on the router
+- **Other firewall** (Norton, Kaspersky, Bitdefender …): allow `BigRaceUSA.exe` and `BigRace-LAN-Launcher.exe` there
+- **Log:** `%TEMP%\BigRace-Lobby-Protokoll.txt`
 
-## Wie es funktioniert
+## How it works
 
-Der eingebaute „Friendly (DirectPlay)“-Modus läuft auf aktuellem Windows nicht zuverlässig. Das Spiel hat aber noch einen zweiten Weg: die längst abgeschaltete **Empire Lobby**. In dem Modus sprechen die Spiele mit einem Lobby-Server und verbinden sich fürs Match direkt per TCP – ganz ohne DirectPlay.
+The built-in "Friendly (DirectPlay)" mode doesn't work reliably on current Windows. But the game has a second way: the long-gone **Empire Lobby**. In that mode the games talk to a lobby server and connect directly over TCP for the match – no DirectPlay at all.
 
-Der Lobby-Server ist im Launcher nachgebaut (`src/Lobby.cs`, Protokoll dort beschrieben). Jeder Launcher hat ihn an Bord; benutzt wird der des Launchers, der zuerst geöffnet wurde. Die Launcher finden sich per UDP-Broadcast und tragen die Lobby-Adresse in `propin.ini` ein (`[empire] Server=`).
+The lobby server is rebuilt inside the launcher (`src/Lobby.cs`, protocol described there). Every launcher carries one; the one of the launcher opened first is used. The launchers find each other by UDP broadcast and write the lobby address into `propin.ini` (`[empire] Server=`).
 
-Die `dinput.dll` ist ein Proxy für die echte `dinput.dll` (das Spiel importiert daraus nur `DirectInputCreateA`). Sie schreibt die Infos des Launchers in den Fenstertitel und holt Dialoge des Spiels nach vorne. Es wird nichts injiziert und an der Spiel-EXE nichts verändert.
+The `dinput.dll` is a proxy for the real `dinput.dll` (the game only imports `DirectInputCreateA` from it). It writes the launcher's information into the window title and brings the game's dialogs to the front. Nothing is injected and the game's EXE is not changed.
 
-## Selbst bauen
+## Building
 
-`src\build.cmd` – braucht die Visual C++ Build Tools (für die `dinput.dll`, 32 Bit) und den C#-Compiler aus dem .NET Framework 4, der bei Windows dabei ist.
+`src\build.cmd` – needs the Visual C++ Build Tools (for the 32-bit `dinput.dll`) and the C# compiler of the .NET Framework 4, which is part of Windows.
 
-## Lizenz
+## License
 
-Eigener Code: MIT, siehe [LICENSE](LICENSE).
-cnc-ddraw: MIT, © FunkyFr3sh, siehe `cnc-ddraw/LICENSE.txt`.
+© 2026 [BockwurstWilly](https://github.com/BockwurstWilly) – own code and docs are licensed under the
+**[PolyForm Noncommercial License 1.0.0](LICENSE)**: you may use, share and change it for any non-commercial purpose,
+as long as the `Required Notice` line (credit to BockwurstWilly with the link) stays with every copy.
+Commercial use only by arrangement – contact me via GitHub. (Until 2026-11-19 the license was MIT.)
 
-Pro Pinball – Big Race USA ist ein Spiel von Cunning Developments / Empire Interactive. Dieses Projekt hat nichts mit den Rechteinhabern zu tun.
+cnc-ddraw: MIT, © FunkyFr3sh, see `cnc-ddraw/LICENSE.txt`.
+
+Pro Pinball – Big Race USA is a game by Cunning Developments / Empire Interactive. This project is not affiliated with the rights holders.
+
+---
+
+## Deutsch
+
+Head-To-Head im Heimnetz unter Windows 10/11 ohne DirectPlay: `BigRace-LAN-Patcher.exe` auf jedem PC starten, **Patch anwenden**, dann über „Big Race USA LAN“ spielen – im Spiel Tisch laden, Esc › Head-To-Head › Friendly (Lobby), Gegner anklicken. **Patch entfernen** macht alles rückgängig. Getestet mit der GOG-Version, das Spiel ist nicht enthalten.
+
+Lizenz: PolyForm Noncommercial 1.0.0 – frei nutzen, weitergeben und verändern, aber nicht kommerziell; der Hinweis auf BockwurstWilly muss bleiben. Kommerzielle Nutzung nur nach Absprache.
